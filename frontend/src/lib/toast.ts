@@ -9,7 +9,7 @@ function normalize(input: ToastInput): { title: string; description?: string } {
 }
 
 function buildOptions(
-  base: { description?: string },
+  base: { description?: string; duration?: number },
   override?: ExternalToast,
 ): ExternalToast {
   return {
