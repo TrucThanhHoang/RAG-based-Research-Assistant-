@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -7,6 +8,8 @@ import tiktoken
 
 from app.core.vector_store import vector_store
 from app.models.document import Document
+
+logger = logging.getLogger(__name__)
 
 CHUNK_SIZE = 600
 CHUNK_OVERLAP = 100
@@ -39,7 +42,7 @@ class IngestionService:
                     if text:
                         pages.append(text)
                 except Exception as e:
-                    print(f"Warning: Failed to extract text from page {page_num}: {e}")
+                    logger.warning("Failed to extract text from page %d: %s", page_num, e)
                     continue
             return "\n\n".join(pages)
         finally:
@@ -79,7 +82,7 @@ class IngestionService:
             pdf_token_count = count_tokens(full_text)
 
             if pdf_token_count > 100000:
-                print(f"Warning: Document {document.id} has {pdf_token_count} tokens (very large)")
+                logger.warning("Document %s has %d tokens (very large)", document.id, pdf_token_count)
 
             splitter = RecursiveCharacterTextSplitter(
                 chunk_size=CHUNK_SIZE,

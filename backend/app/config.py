@@ -20,6 +20,15 @@ class Settings(BaseSettings):
     frontend_url: str = "http://localhost:3000"
 
     database_url: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/rag_db"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def fix_database_url(cls, v: str) -> str:
+        if v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql+psycopg2://", 1)
+        if v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+psycopg2://", 1)
+        return v
     chroma_persist_directory: str = str(Path(__file__).resolve().parents[1] / "vector_store")
     storage_directory: str = str(Path(__file__).resolve().parents[1] / "storage")
 
